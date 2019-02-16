@@ -1,28 +1,34 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+// import './styles.css';
+import React, { memo } from 'react';
+import { useInputValue, useTodos } from './custom-hooks';
+import Layout from './Components/Layout';
+import AddTodo from './Components/AddToDo';
+import TodoList from './Components/ToDoList';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+const TodoApp = memo(props => {
+  const { inputValue, changeInput, clearInput, keyInput } = useInputValue();
+  const { todos, addTodo, checkTodo, removeTodo } = useTodos();
 
-export default App;
+  const clearInputAndAddTodo = _ => {
+    clearInput();
+    addTodo(inputValue);
+  };
+
+  return (
+    <Layout>
+        <AddTodo
+        inputValue={inputValue}
+        onInputChange={changeInput}
+        onButtonClick={clearInputAndAddTodo}
+        onInputKeyPress={event => keyInput(event, clearInputAndAddTodo)}
+      />
+      <TodoList
+        items={todos}
+        inItemCheck={idx => checkTodo(idx)}
+        onItemRemove={idx => removeTodo(idx)}
+      />
+    </Layout>
+  );
+});
+
+export default TodoApp;
